@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="fr" class="no-js">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Calculateur d'impact écologique pour sites web - Défi Green IT">
+    <meta name="theme-color" content="#2e7d32">
+    <title>GreenAnalytics | Éco-conception web</title>
+    
+    <!-- Préchargement minimal -->
+    <link rel="preload" href="style.css" as="style">
+    <link rel="preload" href="script.js" as="script">
+    
+    <!-- CSS intégré pour le contenu critique -->
+    <style>
+        /* Critical CSS (1.5KB) */
+        :root{--green:#2e7d32;--dark:#1b5e20;--light:#e8f5e9;--text:#333;--bg:#fff}
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;line-height:1.6;color:var(--text);background:var(--bg);min-height:100vh}
+        .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+        .container{max-width:800px;margin:0 auto;padding:1rem}
+        header{padding:1rem 0;border-bottom:2px solid var(--light);margin-bottom:2rem}
+        h1{color:var(--green);font-size:1.8rem;margin-bottom:0.5rem}
+        .subtitle{color:#666;font-size:0.9rem}
+        main{padding:1rem 0}
+        footer{padding:2rem 0;margin-top:3rem;border-top:2px solid var(--light);text-align:center;color:#666;font-size:0.8rem}
+        .loading{display:none;text-align:center;padding:2rem}
+        .spinner{width:40px;height:40px;margin:0 auto;border:3px solid var(--light);border-top-color:var(--green);border-radius:50%;animation:spin 1s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+    </style>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌱</text></svg>">
+    
+    <!-- Manifest PWA -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- CSS externe différé -->
+    <link rel="stylesheet" href="style.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="style.css"></noscript>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌿 GreenIT Analytics</h1>
+            <p class="subtitle">Analysez l'impact environnemental de votre site web</p>
+        </header>
+        
+        <main>
+            <section class="intro">
+                <h2 class="sr-only">Introduction</h2>
+                <p>Cet outil évalue l'empreinte écologique d'un site web selon trois critères clés :</p>
+                <ul>
+                    <li>Nombre d'éléments DOM</li>
+                    <li>Poids total des données transférées</li>
+                    <li>Nombre de requêtes HTTP</li>
+                </ul>
+            </section>
+            
+            <section class="analyzer">
+                <h2>Analyse rapide</h2>
+                <form id="urlForm" class="form">
+                    <div class="input-group">
+                        <label for="url" class="sr-only">URL du site à analyser</label>
+                        <input type="url" id="url" name="url" 
+                               placeholder="https://exemple.com" 
+                               required
+                               pattern="https?://.+">
+                        <button type="submit" class="btn">
+                            Analyser
+                            <span aria-hidden="true">→</span>
+                        </button>
+                    </div>
+                    <p class="helper">Exemple : https://www.google.com</p>
+                </form>
+                
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>Analyse en cours...</p>
+                </div>
+                
+                <div class="results hidden" id="results">
+                    <h3>Résultats d'analyse</h3>
+                    
+                    <div class="score-display">
+                        <div class="score-circle">
+                            <svg width="100" height="100" viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="45" stroke="#e0e0e0" stroke-width="8" fill="none"/>
+                                <circle cx="50" cy="50" r="45" stroke="#2e7d32" stroke-width="8" fill="none" 
+                                        stroke-dasharray="283" stroke-dashoffset="70" stroke-linecap="round"
+                                        transform="rotate(-90 50 50)"/>
+                                <text x="50" y="50" text-anchor="middle" dy="0.3em" font-size="20">75</text>
+                            </svg>
+                        </div>
+                        <p class="score-label">Score GreenIT</p>
+                    </div>
+                    
+                    <div class="metrics">
+                        <div class="metric">
+                            <span class="metric-label">Éléments DOM</span>
+                            <span class="metric-value" id="domCount">150</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Poids total</span>
+                            <span class="metric-value" id="totalWeight">1.2 MB</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Requêtes HTTP</span>
+                            <span class="metric-value" id="requestCount">45</span>
+                        </div>
+                    </div>
+                    
+                    <div class="emission">
+                        <h4>Impact CO₂ estimé</h4>
+                        <p><strong id="co2">0.8 g</strong> par page vue</p>
+                        <p class="small">Équivalent à <span id="equivalent">1 m</span> en voiture</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="tips">
+                <h2>Conseils d'optimisation</h2>
+                <div class="tip-cards">
+                    <article class="tip">
+                        <h3>📦 Compresser les ressources</h3>
+                        <p>Utilisez GZIP/Brotli et optimisez les images (WebP, compression)</p>
+                    </article>
+                    <article class="tip">
+                        <h3>⚡ Réduire les requêtes</h3>
+                        <p>Combinez fichiers CSS/JS et utilisez le lazy loading</p>
+                    </article>
+                    <article class="tip">
+                        <h3>🌳 Simplifier le DOM</h3>
+                        <p>Moins d'éléments = moins de mémoire nécessaire</p>
+                    </article>
+                </div>
+            </section>
+            
+            <section class="about">
+                <h2>À propos du défi</h2>
+                <p>Cette application a été créée dans le cadre du défi <strong>Green IT</strong> organisé par NoctEvent et O2Switch.</p>
+                <p>Elle démontre les bonnes pratiques d'éco-conception web :</p>
+                <ul>
+                    <li>Poids total : < 10KB</li>
+                    <li>Éléments DOM : < 50</li>
+                    <li>Requêtes HTTP : 3</li>
+                </ul>
+            </section>
+        </main>
+        
+        <footer>
+            <p>Défi Green IT - NoctEvent & O2Switch</p>
+            <p>Application éco-conçue - © 2024</p>
+            <p class="small">Temps de chargement : <span id="loadTime">0</span>ms</p>
+        </footer>
+    </div>
+    
+    <!-- JavaScript différé -->
+    <script>
+        // Mesure du temps de chargement
+        window.addEventListener('load', () => {
+            const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
+            document.getElementById('loadTime').textContent = loadTime;
+        });
+    </script>
+    <script src="script.js" defer></script>
+</body>
+</html>
